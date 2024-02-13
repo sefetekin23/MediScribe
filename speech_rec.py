@@ -1,12 +1,24 @@
 import speech_recognition as sr
+
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        audio = r.listen(source)
-    try :
-        print("Recognizing...")
-        query = r.recognize_google(audio, language = 'en')
-    except sr.UnknownValueError:
-        print('Say that again please')
-takeCommand()
+        # Adjust for ambient noise before starting to listen
+        r.adjust_for_ambient_noise(source)
+        while True:
+            try:
+                # Listen for audio continuously
+                audio = r.listen(source, timeout=5)  # Adjust timeout as needed
+                # Recognize speech
+                print("Recognizing...")
+                query = r.recognize_google(audio, language='en')
+                print("You said:", query)
+                # Check for a stop command (you can customize this condition)
+                if "stop listening" in query.lower():
+                    print("Stopping listening...")
+                    break
+            except sr.UnknownValueError:
+                print('Could not understand audio. Please try again.')
+if __name__ == "__main__":
+    takeCommand()
