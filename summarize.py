@@ -1,5 +1,6 @@
 import re
 from speech_rec import take_input
+from nltk.tokenize import sent_tokenize
 def extract_health_info(text: str):
     symptoms_keywords = [
         'pain', 'fatigue', 'fever', 'headache', 'nausea', 'vomiting',
@@ -68,13 +69,14 @@ def extract_health_info(text: str):
 
 # Example usage
 text = "Hello, Doctor. Before we start, this appointment is being recorded and the audio will be deleted after the session. It’s used to fill out your patient information. Is that okay with you? Yeah, fine by me. So how are you, what seems to be the issue? I have had a cough for the past week. Okay, can you tell me more about your cough? It’s kind of chesty and i feel breathless when it happens. Okay, are you currently taking any medication? Yeah, i am taking some paracetamol. antibiotic Alright, having heard your symptoms it’s possible you have a respiratory infection. We can run some tests, and you should do a physical exam. Alright, thank you for your help."
-test_speech = ''' I have had a cough for the past week. 
-It’s kind of chesty and i feel breathless when it happens. 
-I am taking some paracetamol.
-You have a respiratory infection. 
-You should do a physical exam. '''
+test_speech = ''' I have had a cough for the past week 
+It’s kind of chesty and i feel breathless when it happens 
+I am taking some paracetamol
+You have a respiratory infection 
+You should do a physical exam '''
 
-b = str(take_input())
+#b = str(take_input())
+b= sent_tokenize(test_speech)
 print(b)
 symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
 
