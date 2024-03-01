@@ -1,5 +1,6 @@
 import re
 from speech_rec import take_input
+from flask import Flask, jsonify, request
 
 def extract_health_info(text: str):
     symptoms_keywords = [
@@ -76,11 +77,20 @@ I am taking some paracetamol
 you have a respiratory infection 
 you should do a physical exam '''
 
-b = str(take_input())
-print(b)
-symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
 
-print("\nSymptoms:", ", ".join(symptoms))
-print("\nCurrent medications:", ", ".join(cur_med))
-print("\nRecommended medications:", ", ".join(rec_med))
-print("\nDiagnosis:", ", ".join(diagnosis))
+
+app = Flask(__name__)
+
+@app.route('/keywords', methods=['GET'])
+def get_keywords():
+    b = str(take_input())
+    symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
+    return jsonify({
+        'symptoms': symptoms,
+        'recommended_medications': rec_med,
+        'current_medications': cur_med
+        'diagnosis': diagnosis
+    })
+    
+if __name__ == '__main__':
+    app.run(debug=True)
