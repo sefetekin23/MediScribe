@@ -1,5 +1,5 @@
 import re
-import speech_rec
+from speech_rec import take_input
 def extract_health_info(text: str):
     symptoms_keywords = [
         'pain', 'fatigue', 'fever', 'headache', 'nausea', 'vomiting',
@@ -73,8 +73,10 @@ It’s kind of chesty and i feel breathless when it happens.
 I am taking some paracetamol.
 You have a respiratory infection. 
 You should do a physical exam. '''
-input = speech_rec.take_input()
-symptoms, rec_med, cur_med, diagnosis = extract_health_info(input)
+
+b = str(take_input())
+print(b)
+symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
 
 print("\nSymptoms:", ", ".join(symptoms))
 print("\nCurrent medications:", ", ".join(cur_med))

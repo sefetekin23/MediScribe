@@ -9,17 +9,17 @@ def take_input():
         while True:
             try:
                 # Listen for audio continuously
-                audio = r.listen(source, timeout=2)  # Adjust timeout as needed
+                audio = r.listen(source)  # Adjust timeout as needed
                 # Recognize speech
                 print("Recognizing...")
-                input = r.recognize_google(audio, language='en')
+                a = r.recognize_google(audio, language='en')
                 # Check for a stop command (you can customize this condition)
-                if "stop listening" in input.lower():
+                if "stop listening" in a.lower():
                     print("Stopping listening...")
                     break
             except sr.UnknownValueError:
                 print('Could not understand audio. Please try again.')
-    return input
+    return a
 
 if __name__ == "__main__":
     result = take_input()
