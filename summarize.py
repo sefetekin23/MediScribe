@@ -1,15 +1,14 @@
 import re
 
 def extract_health_info(text: str):
-    # Define lists of health-related keywords or phrases
     symptoms_keywords = [
         'pain', 'fatigue', 'fever', 'headache', 'nausea', 'vomiting',
-        'diarrhea', 'dizziness', 'breath', 'breathing', 'breathless', 'cough',
+        'diarrhea', 'dizziness', 'breathing', 'breathless', 'cough',
         'sore throat', 'muscle aches', 'swelling', 'bruising',
         'rash', 'itching',
     ]
 
-    cur_med_keywords = [
+    med_keywords = [
         'paracetamol', 'ibuprofen', 'aspirin', 'antibiotic', 'antidepressant',
         'antipsychotic', 'antihistamine', 'vaccine', 'immunotherapy', 'chemotherapy',
         'painkiller', 'antibiotic', 'analgesic', 'antidepressant', 'antipsychotic',
@@ -19,57 +18,60 @@ def extract_health_info(text: str):
         'psychotherapy', 'chiropractic', 'acupuncture', 'homeopathy',
         'hormone therapy', 'antiviral', 'antifungal', 'anticoagulant',
         'statin', 'beta blocker', 'ACE inhibitor', 'aspirin',
-        'ibuprofen', 'paracetamol', 'metformin',
+        'ibuprofen', 'paracetamol', 'metformin', 'antibiotic', 'physical exam'
     ]
+    
+    diagnosis_keywords = [
+        'respiratory infection', 'pneumonia', 'bronchitis', 'asthma', 'COPD',
+        'lung cancer', 'COVID-19', 'coronavirus', 'influenza', 'flu',
+        'common cold', 'sinusitis', 'allergic rhinitis', 'hay fever',
+        'pulmonary embolism', 'pulmonary fibrosis', 'tuberculosis', 'TB',
+        'pulmonary hypertension', 'lung abscess', 'pleurisy', 'pleural effusion',
+        'cystic fibrosis', 'pulmonary edema', 'ARDS', 'pulmonary nodules',
+    ] 
+    
+    # Define phrases that typically indicate a recommendation or a statement of current medication
+    rec_phrases = ["i recommend", "you should", "try taking"]
+    cur_phrases = ["i am taking", "i have been prescribed", "my current medication is"]
 
-    rec_med_keywords = [
-        'ibuprofen', 'aspirin', 'antibiotic', 'antidepressant',
-        'antipsychotic', 'antihistamine', 'vaccine', 'immunotherapy', 'chemotherapy',
-        'painkiller', 'biopsy', 'MRI', 'ultrasound', 'X-ray', 'chemotherapy',
-        'radiation therapy', 'blood test', 'urine test', 'CT scan',
-        'endoscopy', 'colonoscopy', 'mammogram', 'vaccination',
-        'physical therapy', 'occupational therapy', 'speech therapy', 'physical',
-    ]
-
-    # Split the text into words
-    text = text.replace("i'm", "im")
-    text = text.replace("I'm", "im")
-    text = text.replace("I am", "im")
-    text = text.replace("i am", "im")
-    words = re.findall(r'\b\w+\b', text.lower())  # Extract words while converting to lowercase
-   #FIND A WAY TO INCLUDE FULLSTOPS IN WORDS LIST 
+    # Split the text into sentences
+    sentences = re.split(r'[.!?]', text)
 
     # Extract words that match the keywords for each category
-    symptoms = [word for word in words if word in symptoms_keywords]
-    rec_med = [word for word in words if word in rec_med_keywords]
+    symptoms = [word for word in symptoms_keywords if word in text.lower()]
+    diagnosis = [word for word in diagnosis_keywords if word in text.lower()]
 
-    # Extract current medications after each "I'm"
+        # Initialize the lists for recommended and current medications
+    rec_med = []
     cur_med = []
-    try:
-        im_indices = [i for i, word in enumerate(words) if word == "im"]
-        for im_index in im_indices:
-            taking_index = words.index("taking", im_index) if "taking" in words[im_index:] else -1
-            if taking_index == im_index + 1:
-                # Find the index of the first period after taking_index
-                for word in words[taking_index + 1:]:
-                    # Check if the word is in 
-                    if "." == word:
-                        break
-                    elif word in cur_med_keywords:
-                        cur_med.append(word)
-                    # Check if a period is encountered, and break the loop if true
-                    
-                
-    except ValueError:
-        pass
 
-    return list(set(symptoms)), list(set(rec_med)), list(set(cur_med))
+    # Check each sentence individually
+    for sentence in sentences:
+        # Convert the sentence to lowercase
+        sentence = sentence.lower()
+
+        # Check if the sentence contains a recommendation phrase and any of the rec_med_keywords
+        for phrase in rec_phrases:
+            if phrase in sentence:
+                for word in med_keywords:
+                    if word in sentence:
+                        rec_med.append(word)
+
+        # Check if the sentence contains a current medication phrase and any of the cur_med_keywords
+        for phrase in cur_phrases:
+            if phrase in sentence:
+                for word in med_keywords:
+                    if word in sentence:
+                        cur_med.append(word)
+
+    return list(set(symptoms)), list(set(rec_med)), list(set(cur_med)), list(set(diagnosis))
 
 # Example usage
-text = "Hello, Doctor. Before we start, this appointment is being recorded and the audio will be deleted after the session. It’s used to fill out your patient information. Is that okay with you? Yeah, fine by me. So how are you, what seems to be the issue? I have had a cough for the past week. Okay, can you tell me more about your cough? It’s kind of chesty and i feel breathless when it happens. Okay, are you currently taking any medication? Yeah, i'm taking some paracetamol. antibiotic Alright, having heard your symptoms it’s possible you have a respiratory infection. We can run some tests, and do a physical exam. Alright, thank you for your help."
+text = "Hello, Doctor. Before we start, this appointment is being recorded and the audio will be deleted after the session. It’s used to fill out your patient information. Is that okay with you? Yeah, fine by me. So how are you, what seems to be the issue? I have had a cough for the past week. Okay, can you tell me more about your cough? It’s kind of chesty and i feel breathless when it happens. Okay, are you currently taking any medication? Yeah, i am taking some paracetamol. antibiotic Alright, having heard your symptoms it’s possible you have a respiratory infection. We can run some tests, and you should do a physical exam. Alright, thank you for your help."
 
-symptoms, rec_med, cur_med = extract_health_info(text)
+symptoms, rec_med, cur_med, diagnosis = extract_health_info(text)
 
 print("\nSymptoms:", ", ".join(symptoms))
-print("\nCurrent Medications:", ", ".join(cur_med))
-print("\nRecommended Medications:", ", ".join(rec_med))
+print("\nCurrent medications:", ", ".join(cur_med))
+print("\nRecommended medications:", ", ".join(rec_med))
+print("\nDiagnosis:", ", ".join(diagnosis))
