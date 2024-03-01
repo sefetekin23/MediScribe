@@ -1,6 +1,5 @@
-import re
 from speech_rec import take_input
-from nltk.tokenize import sent_tokenize
+import re
 def extract_health_info(text: str):
     symptoms_keywords = [
         'pain', 'fatigue', 'fever', 'headache', 'nausea', 'vomiting',
@@ -19,7 +18,7 @@ def extract_health_info(text: str):
         'psychotherapy', 'chiropractic', 'acupuncture', 'homeopathy',
         'hormone therapy', 'antiviral', 'antifungal', 'anticoagulant',
         'statin', 'beta blocker', 'ACE inhibitor', 'aspirin',
-        'ibuprofen', 'paracetamol', 'metformin', 'antibiotic', 'physical exam'
+        'ibuprofen', 'paracetamol', 'metformin', 'antibiotic', 'physical exam',
     ]
     
     diagnosis_keywords = [
@@ -28,59 +27,65 @@ def extract_health_info(text: str):
         'common cold', 'sinusitis', 'allergic rhinitis', 'hay fever',
         'pulmonary embolism', 'pulmonary fibrosis', 'tuberculosis', 'TB',
         'pulmonary hypertension', 'lung abscess', 'pleurisy', 'pleural effusion',
-        'cystic fibrosis', 'pulmonary edema', 'ARDS', 'pulmonary nodules',
+        'cystic fibrosis', 'pulmonary edema', 'ARDS', 'pulmonary nodules','respiratory infection'
     ] 
+
     
-    # Define phrases that typically indicate a recommendation or a statement of current medication
-    rec_phrases = ["i recommend", "you should", "try taking"]
-    cur_phrases = ["i am taking", "i have been prescribed", "my current medication is"]
 
-    # Split the text into sentences
-    sentences = re.split(r'[.!?]', text)
+    
+    text = text.lower()
+    
+    # Add placeholders to the text at the start of each part
+    text = text.replace('talking about the symptoms', '<symptoms>')
+    text = text.replace('talking about the current medications', '<cur_med>')
+    text = text.replace('talking about the diagnosis', '<diagnosis>')
+    text = text.replace('talking about the recommended medications', '<rec_med>')
 
-    # Extract words that match the keywords for each category
-    symptoms = [word for word in symptoms_keywords if word in text.lower()]
-    diagnosis = [word for word in diagnosis_keywords if word in text.lower()]
+    # Split the text into words
+    words = text.split()
+    
+    # Find the parts of the text that correspond to each category
+    symptoms_part = " ".join(words[words.index('<symptoms>')+1:words.index('<cur_med>')])
+    cur_med_part = " ".join(words[words.index('<cur_med>')+1:words.index('<diagnosis>')])
+    diagnosis_part = " ".join(words[words.index('<diagnosis>')+1:words.index('<rec_med>')])
+    rec_med_part = " ".join(words[words.index('<rec_med>')+1:])
+    
+    # Convert the sentence to lowercase
+    symptoms, cur_med, diagnosis, rec_med = [], [], [], []
+    # Check if the sentence contains a recommendation phrase and any of the rec_med_keywords
+    for word in symptoms_keywords:
+        if word in symptoms_part:
+            symptoms.append(word)
+            
+    for word in med_keywords:
+        if word in cur_med_part:
+            cur_med.append(word)
+            
+    for word in diagnosis_keywords:
+        if word in diagnosis_part:
+            diagnosis.append(word)
+            
+    for word in med_keywords:
+        if word in rec_med_part:
+            rec_med.append(word)
 
-        # Initialize the lists for recommended and current medications
-    rec_med = []
-    cur_med = []
-
-    # Check each sentence individually
-    for sentence in sentences:
-        # Convert the sentence to lowercase
-        sentence = sentence.lower()
-
-        # Check if the sentence contains a recommendation phrase and any of the rec_med_keywords
-        for phrase in rec_phrases:
-            if phrase in sentence:
-                for word in med_keywords:
-                    if word in sentence:
-                        rec_med.append(word)
-
-        # Check if the sentence contains a current medication phrase and any of the cur_med_keywords
-        for phrase in cur_phrases:
-            if phrase in sentence:
-                for word in med_keywords:
-                    if word in sentence:
-                        cur_med.append(word)
-
-    return list(set(symptoms)), list(set(rec_med)), list(set(cur_med)), list(set(diagnosis))
+    # Check if the sentence contains a current medication phrase and any of the cur_med_keywords
+    
+    
+    return list(set(symptoms)), list(set(cur_med)), list(set(diagnosis)), list(set(rec_med))
 
 # Example usage
 text = "Hello, Doctor. Before we start, this appointment is being recorded and the audio will be deleted after the session. It’s used to fill out your patient information. Is that okay with you? Yeah, fine by me. So how are you, what seems to be the issue? I have had a cough for the past week. Okay, can you tell me more about your cough? It’s kind of chesty and i feel breathless when it happens. Okay, are you currently taking any medication? Yeah, i am taking some paracetamol. antibiotic Alright, having heard your symptoms it’s possible you have a respiratory infection. We can run some tests, and you should do a physical exam. Alright, thank you for your help."
-test_speech = ''' I have had a cough for the past week 
+test_speech = ''' talking about the symptoms I have had a cough for the past week 
 It’s kind of chesty and i feel breathless when it happens 
-I am taking some paracetamol
-You have a respiratory infection 
-You should do a physical exam '''
+talking about the current medications I am taking some paracetamol
+talking about the diagnosis You have a respiratory infection 
+talking about the recommended medications You should do a physical exam '''
 
-#b = str(take_input())
-b= sent_tokenize(test_speech)
-print(b)
-symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
+
+symptoms, cur_med, diagnosis,rec_med = extract_health_info(test_speech)
 
 print("\nSymptoms:", ", ".join(symptoms))
 print("\nCurrent medications:", ", ".join(cur_med))
-print("\nRecommended medications:", ", ".join(rec_med))
 print("\nDiagnosis:", ", ".join(diagnosis))
+print("\nRecommended medications:", ", ".join(rec_med))
