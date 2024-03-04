@@ -1,6 +1,6 @@
 from speech_rec import take_input
 from flask import Flask, jsonify
-
+from flask_cors import CORS
 def extract_health_info(text: str):
     # lists of keywords for each category
     symptoms_keywords = [
@@ -28,7 +28,7 @@ def extract_health_info(text: str):
         'common cold', 'sinusitis', 'hay fever', 'pulmonary fibrosis', 
         'tuberculosis', 'TB', 'lung abscess', 'pleurisy', 'pleural effusion',
         'cystic fibrosis', 'pulmonary edema', 'pulmonary nodules',
-        'cancer', 'tumor', 'virus', 'bacteria', 'infection', 'inflammation'
+        'cancer', 'tumor', 'virus', 'bacteria', 'inflammation'
     ] 
     
     # Define phrases that typically indicate a recommendation or a statement of current medication
@@ -79,28 +79,27 @@ Alright, having heard your symptoms it’s possible you have a respiratory infec
 We can run some tests, and you should do a physical exam. 
 Alright, thank you for your help.'''
 
-#run example text
+#Run example text
 symptoms, rec_med, cur_med, diagnosis = extract_health_info(example_conversation)
 print("\nSymptoms:", ", ".join(symptoms))
 print("\nCurrent medications:", ", ".join(cur_med))
 print("\nRecommended medications:", ", ".join(rec_med))
 print("\nDiagnosis:", ", ".join(diagnosis))
 
-
-
-# Flask app for converting to json
+#Flask app for converting to json
 app = Flask(__name__)
 # Define a route for the resource
-@app.route('/keywords', methods=['GET'])
+@app.route('/keywords', methods=['GET']) #go to http://127.0.0.1:5000/keywords to see the json output
 def get_keywords():
-    b = str(take_input())
-    symptoms, rec_med, cur_med, diagnosis = extract_health_info(b)
+    inputData = str(take_input()) #replace "example_conversation" here with "str(take_input())" to use the voice command input of a conversation
+    symptoms, rec_med, cur_med, diagnosis = extract_health_info(inputData)
     return jsonify({
         'symptoms': symptoms,
         'recommended_medications': rec_med,
         'current_medications': cur_med,
         'diagnosis': diagnosis
     })
+CORS(app) #cross-origin resource sharing
     
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run() 
