@@ -4,4 +4,5 @@ Over 300 million patient consultations occur in the NHS annually. After each con
 Team Members: Ibrahim Gabol, Mohamad El Habbal, Jiyu Kim, Mahum Najam, Aishani Sinha, Efe Tekin
 
 Video explaining the project idea: https://www.youtube.com/watch?v=ciB78RyagzE
+
 Video showing the program working: https://www.youtube.com/watch?si=YCCinzNKlJi2ZCe_&v=7jfrHeVJN-Q&feature=youtu.be
