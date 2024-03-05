@@ -1,0 +1,48 @@
+To run the MediScribe prototype:
+
+The python program:
+Run the python program with the required dependencies: pyaudio, flask ect.
+Line 94 will give you the choice to use default text or start recording
+
+The FHIR Local Database:
+https://github.com/hapifhir/hapi-fhir-jpaserver-starter?tab=readme-ov-file
+
+Install and run this local FHIR database. It should be empty to begin with when running.
+
+The Vue Project:
+Make sure you have npm, Vue.js, and Node.js v4 installed. If you don't have them yet installed, we recommend using nvm and Vue.js.
+- npm install
+- npm run dev 
+
+Now click the initialise healthcare database
+This creates a record for the Giggie Grove Healthcentre
+This also creates arecord for the example practitioner Mohamad El Habbal
+      "text": "Mohamad El Habbal"
+      }],
+      "birthDate": "1954-03-10",
+      "telecom": [{
+        "system": "phone",
+        "value": "1028884029"
+      }, {
+        "system": "email",
+        "value": "drmohamad@mohamad.com"
+This also creates a record for the example patient
+      "resourceType": "Patient",
+      "name": [{
+        "text": "Ben Cook"
+      }],
+      "birthDate": "2000-10-31",
+      "telecom": [{
+        "system": "phone",
+        "value": "07491823847"
+      }, {
+        "system": "email",
+        "value": "thenewjoeshmoe@joeshmoe.com"
+      }],
+
+When creating a new appointment, make sure atleast the practitioner name and patient name match the example ones, so that the program can find them.
+
+Press start listening with the python flask app running, this allows them to exchange the transcript information
+
+Submit
+Now you should see a new record for an appointment being made! 
