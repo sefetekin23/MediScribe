@@ -66,7 +66,7 @@ def extract_health_info(text: str):
 
 # Example text
 example_conversation = '''Hello, Doctor.
-Before we start, this appointment is being recorded and the audio will be deleted after the session.
+Before we start, this appointment is being recorded. 
 It’s used to fill out your patient information. Is that okay with you? 
 Yeah, fine by me. 
 So how are you, what seems to be the issue? 
