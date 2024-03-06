@@ -12,14 +12,13 @@ def extract_health_info(text: str):
 
     med_keywords = [
         'paracetamol', 'ibuprofen', 'aspirin', 'antibiotic', 'antidepressant',
-        'antipsychotic', 'antihistamine', 'vaccine', 'immunotherapy', 'chemotherapy',
-        'painkiller', 'analgesic', 'antidepressant', 'antipsychotic',
+        'painkiller', 'analgesic', 'antipsyc    hotic',
         'antihistamine', 'vaccine', 'immunotherapy', 'chemotherapy',
         'radiation', 'surgery', 'transplant', 'dialysis', 'ventilator',
         'anesthesia', 'insulin', 'steroid', 'physical therapy',
         'psychotherapy', 'chiropractic', 'acupuncture', 'homeopathy',
         'hormone therapy', 'antiviral', 'antifungal', 'anticoagulant',
-        'statin', 'ACE inhibitor', 'aspirin', 'metformin', 'physical'
+        'statin', 'ACE inhibitor', 'metformin', 'physical'
     ]
     
     diagnosis_keywords = [
@@ -74,7 +73,7 @@ I have had a cough for the past week.
 Okay, can you tell me more about your cough? 
 It’s kind of chesty and i feel breathless when it happens. 
 Okay, are you currently taking any medication? 
-Yeah, i am taking paracetamol . 
+Yeah, i am taking paracetamol. 
 Alright, having heard your symptoms it’s possible you have a respiratory infection. 
 We can run some tests, and you should do a physical exam. 
 Alright, thank you for your help.'''
@@ -89,9 +88,9 @@ print("\nDiagnosis:", ", ".join(diagnosis))
 #Flask app for converting to json
 app = Flask(__name__)
 # Define a route for the resource
-@app.route('/keywords', methods=['GET']) #go to http://127.0.0.1:5000/keywords to see the json output
+@app.route('/keywords', methods=['GET']) #go to http://127.0.0.1:5000/keywords to see the JSON output
 def get_keywords():
-    inputData = str(take_input()) #replace "example_conversation" here with "str(take_input())" to use the voice command input of a conversation
+    inputData = str(take_input()) #replace "str(take_input())" here with "example_conversation" to run the example conversation
     symptoms, rec_med, cur_med, diagnosis = extract_health_info(inputData)
     return jsonify({
         'symptoms': symptoms,
